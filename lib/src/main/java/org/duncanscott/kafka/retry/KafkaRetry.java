@@ -205,13 +205,10 @@ public class KafkaRetry<K, V> implements Closeable {
 
     @Override
     public synchronized void close() throws IOException {
-        try {
-            logger.info("closing");
-            try {
-                consumer.close();
-            } finally {
-                producer.close();
-            }
+        logger.info("closing");
+        try (KafkaConsumer<K, V> consumerToClose = consumer;
+             KafkaProducer<K, V> producerToClose = producer) {
+            // No need for nested try-catch blocks for closing resources
         } finally {
             this.closed = true;
         }
